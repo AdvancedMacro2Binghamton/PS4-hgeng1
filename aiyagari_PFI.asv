@@ -1,4 +1,4 @@
-% PROGRAM NAME: aiyagari.m
+% PROGRAM NAME: aiyagari_PFI.m
 clear all;
 close all;
 clc;
@@ -31,6 +31,9 @@ K_min=20;
 K_max=50;
 K_tol=1;
 while abs(K_tol)>.01
+     if K_max-K_min<0.00001
+       break
+     end
     % K_guess and correspoding factor prices
     K_guess=(K_min+K_max)/2;
     interest= alpha*K_guess^(alpha-1)*N_s^(1-alpha)+(1-delta);
@@ -44,18 +47,39 @@ while abs(K_tol)>.01
     % INITIAL VALUE FUNCTION GUESS
     v_guess = zeros(num_z, num_a);
     
-    % VALUE FUNCTION ITERATION
+    % POLICY FUNCTION ITERATION (INSTEAD OF VFI)
     v_tol = 1;
     while v_tol >.000001;
-        % CONSTRUCT RETURN + EXPECTED CONTINUATION VALUE
+        % CONSTRUCT RETURN + EXPECTED CONTINUATION VALUE (l=1)
         value_mat=ret+beta*repmat(permute((PI*v_guess),[3 2 1]), [num_a 1 1]);
         % CHOOSE HIGHEST VALUE (ASSOCIATED WITH a' CHOICE)
        [vfn, pol_indx] = max(value_mat, [], 2); %max for each row
        vfn=permute(vfn, [3 1 2]);
+       pol_indx=permute(pol_indx, [3 1 2]); %intial policy function
+       
        v_tol = max(abs(vfn-v_guess));
        v_tol = max(v_tol(:));
+       v_guess = vfn; %update value function
        
-       v_guess = vfn;
+       %CONSTRUCT Q MATRIX
+       Q = makeQmatrix(pol_indx, PI);
+       %NEW RETURN FUNCTION OF RETURN VECTOR (l=1,j=1)
+       pol_fn = a(pol_indx);
+       u_mat=bsxfun(@minus, interest* a, pol_fn);
+       u_mat = bsxfun(@plus, u_mat, z_grid'*wage);
+       u_mat = (u_mat .^ (1-sigma)) ./ (1 - sigma);
+       u_vec=u_mat(:);
+       
+       w_vec=v_guess(:);
+       
+       %PFI (l>2 and j>2)
+       k=30;
+       for j=1:k
+           w_vec_new=u_vec+beta*Q*w_vec;
+           w_vec=w_vec_new;
+       end
+       v_guess=reshape(w_vec,num_z,num_a);
+       
     end;
     
     % KEEP DECSISION RULE
@@ -91,7 +115,6 @@ while abs(K_tol)>.01
    end
 end
 
-%%
 %Q6 (1) policy function
 figure(1)
 plot(a,pol_fn)
@@ -109,7 +132,6 @@ figure(2)
 bar(wealth(1:num_a),MU(1,:),'blue')
 hold on
 bar(wealth(num_a+1:2*num_a),MU(2,:),'red')
-xlim([-2 2.5]);
 legend('Employed','Unemployed','location','northwest')
 title('Distribution')
 hold off
@@ -132,17 +154,3 @@ plot([0,1],[0,1],'--k')
 axis square
 title(['Wealth, Gini=',num2str(gini_wealth2)])
 hold off
-
-
-PI_stat=PI^num_a; %long-run probability
-c=PI_stat(1,:)*y_s';  
-W_FB=((c^(1-sigma))/(1-sigma))/(1-beta);%first best welfare
-lambda=((v_guess.^(-1)).*W_FB).^(1/(1-sigma))-1;%consumption equivalent
-Hh_B=sum(sum((lambda>0).*MU));%franction W_FB is better than v(s,a)
-WG=sum(sum(lambda.*MU)); % welfare gain
-
-figure(5)
-plot(a,lambda(1,:),'blue',a,lambda(2,:),'r')
-legend('Employed','Unemployed','location','northeast')
-suptitle(['Consumption Equivalent'])
-title( ['Welfare Gain=',num2str(WG)])
