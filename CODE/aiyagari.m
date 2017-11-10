@@ -1,4 +1,4 @@
-% PROGRAM NAME: aiyagari_PFI.m
+% PROGRAM NAME: aiyagari.m
 clear all;
 close all;
 clc;
@@ -31,9 +31,9 @@ K_min=20;
 K_max=50;
 K_tol=1;
 while abs(K_tol)>.01
-     if K_max-K_min<0.00001
+    if K_max-K_min<0.00001
        break
-     end
+   end
     % K_guess and correspoding factor prices
     K_guess=(K_min+K_max)/2;
     interest= alpha*K_guess^(alpha-1)*N_s^(1-alpha)+(1-delta);
@@ -47,42 +47,22 @@ while abs(K_tol)>.01
     % INITIAL VALUE FUNCTION GUESS
     v_guess = zeros(num_z, num_a);
     
-    % POLICY FUNCTION ITERATION (INSTEAD OF VFI)
+    % VALUE FUNCTION ITERATION
     v_tol = 1;
     while v_tol >.000001;
-        % CONSTRUCT RETURN + EXPECTED CONTINUATION VALUE (l=1)
+        % CONSTRUCT RETURN + EXPECTED CONTINUATION VALUE
         value_mat=ret+beta*repmat(permute((PI*v_guess),[3 2 1]), [num_a 1 1]);
         % CHOOSE HIGHEST VALUE (ASSOCIATED WITH a' CHOICE)
        [vfn, pol_indx] = max(value_mat, [], 2); %max for each row
        vfn=permute(vfn, [3 1 2]);
-       pol_indx=permute(pol_indx, [3 1 2]); %intial policy function
-       
        v_tol = max(abs(vfn-v_guess));
        v_tol = max(v_tol(:));
-       v_guess = vfn; %update value function
        
-       %CONSTRUCT Q MATRIX
-       Q = makeQmatrix(pol_indx, PI);
-       %NEW RETURN FUNCTION OF RETURN VECTOR (l=1,j=1)
-       pol_fn = a(pol_indx);
-       u_mat=bsxfun(@minus, interest* a, pol_fn);
-       u_mat = bsxfun(@plus, u_mat, z_grid'*wage);
-       u_mat = (u_mat .^ (1-sigma)) ./ (1 - sigma);
-       u_vec=u_mat(:);
-       
-       w_vec=v_guess(:);
-       
-       %PFI (l>2 and j>2)
-       k=30;
-       for j=1:k
-           w_vec_new=u_vec+beta*Q*w_vec;
-           w_vec=w_vec_new;
-       end
-       v_guess=reshape(w_vec,num_z,num_a);
-       
+       v_guess = vfn;
     end;
     
     % KEEP DECSISION RULE
+    pol_indx=permute(pol_indx, [3 1 2]);
     pol_fn = a(pol_indx);
     
     % SET UP INITITAL DISTRIBUTION
@@ -149,3 +129,16 @@ plot([0,1],[0,1],'--k')
 axis square
 title(['Wealth, Gini=',num2str(gini_wealth2)])
 hold off
+
+y=z_grid*wage
+Y=repmat(y',[1,num_a]);
+A=repmat(a,[num_z,1])
+c=Y+interest*A-pol_fn;
+cf=c(:,pol_indx');
+cf1=reshape(cf,[num_z num_a num_z]);
+i=1;
+while i < num_z+1
+c1(i,:)=PI(i,:)*cf1(:,:,i);
+i=i+1;
+end
+Eulererror=sum(sum(abs(c.^(-sigma)-beta*c1.^(-sigma)*interest).*MU))

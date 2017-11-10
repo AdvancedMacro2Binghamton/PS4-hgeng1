@@ -191,7 +191,7 @@ Q2.
 The households' recursive problem is 
 \begin_inset Formula 
 \begin{eqnarray*}
-v(z,a) & = & \underset{a'\in\Gamma(z,a)}{\text{max}}\left\{ \frac{\left(z\omega+ra-a'\right)^{1-\sigma}}{1-\sigma}+\beta\mathbb{E}_{s'|s}\left[v(z',a')\right]\right\} 
+v(z,a) & = & \underset{a'\in\Gamma(z,a)}{\text{max}}\left\{ \frac{\left(z\omega\bar{l}+ra-a'\right)^{1-\sigma}}{1-\sigma}+\beta\mathbb{E}_{s'|s}\left[v(z',a')\right]\right\} 
 \end{eqnarray*}
 
 \end_inset
@@ -225,8 +225,12 @@ Given
 \begin_inset Formula $m=5$
 \end_inset
 
- possible values, the corresponding transition matrix over prodctivity is
- 
+ possible values 
+\begin_inset Formula $z=\left[\begin{array}{ccccc}
+0.5002 & 0.7072 & 1.0000 & 1.4140 & 1.9993\end{array}\right]$
+\end_inset
+
+, the corresponding transition matrix over prodctivity is 
 \begin_inset Formula $\left[\begin{array}{ccccc}
 0.1932 & 0.6135 & 0.1886 & 0.0047 & 7.4512\times10^{-6}\\
 0.0416 & 0.4584 & 0.4584 & 0.0414 & 2.6600\times10^{-4}\\
@@ -280,7 +284,7 @@ Assume
 
 .
  
-\begin_inset Formula $K_{max}=50$
+\begin_inset Formula $K_{min=20}\text{ and }K_{max}=50$
 \end_inset
 
 .
@@ -297,12 +301,20 @@ The steady state interest rate is
 \begin_inset Formula $1.0099$
 \end_inset
 
- which is slightly lower than complete markets steady state interest rate
+ (or net 
+\begin_inset Formula $0.99\%$
+\end_inset
+
+) which is slightly lower than complete markets steady state interest rate
  
 \begin_inset Formula $r^{CM}=1/\beta=1/0.9900=1.0101$
 \end_inset
 
-.
+ (or net 
+\begin_inset Formula $1.01\%$
+\end_inset
+
+) .
 \end_layout
 
 \begin_layout Standard
@@ -353,7 +365,7 @@ The Gini of Aiyagari model is 0.23247 and Lorenz curve is plotted in Figure
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Caption Standard
@@ -498,10 +510,6 @@ Q7.
  Alternative ways
 \end_layout
 
-\begin_layout Standard
-The grid search methods is done in Q5.
-\end_layout
-
 \begin_layout Subsection*
 Policy function iteration
 \end_layout
@@ -519,8 +527,122 @@ Use
 Linear interpolation
 \end_layout
 
-\begin_layout Section*
-Extra Credit: Cubic Spline Interpolation
+\begin_layout Standard
+I am still working on questions related to interpolation, I hope I can update
+ it during the weekends.
+\end_layout
+
+\begin_layout Subsection*
+Time tracking and error
+\end_layout
+
+\begin_layout Standard
+Track the time of value function iteration and policy function iteration
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Time Tracking
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Value Function Iteration (with Euler Equation Error 0.0050) 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename GRAPHS/aiyagari_Grid.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Policy Function Iteration (with Euler Equation Error 0.0050)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename GRAPHS/aiyagari_PFI.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body
