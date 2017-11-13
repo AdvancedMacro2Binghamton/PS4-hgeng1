@@ -1,4 +1,4 @@
-% PROGRAM NAME: aiyagari_VFI.m
+% PROGRAM NAME: aiyagari_coarsegrid.m
 clear all;
 close all;
 clc;
@@ -22,9 +22,11 @@ N_s=z_grid*PI_inv; % aggregate labor supply (Q3.)
 % ASSET VECTOR
 a_lo = 0; %lower bound of grid points
 a_hi = 80;%(guess) upper bound of grid points
-num_a = 500;
+num_a = 50;
+n_a=500;
 
 a = linspace(a_lo, a_hi, num_a); % asset (row) vector
+a_inter = linspace(a_lo, a_hi, n_a);
 
 %INITIAL GUESS OF K AND FACTOR PRICES
 K_min=20;
@@ -60,14 +62,28 @@ while abs(K_tol)>.01
        
        v_guess = vfn;
     end;
-    
     % KEEP DECSISION RULE
     pol_indx=permute(pol_indx, [3 1 2]);
     pol_fn = a(pol_indx);
     
+    %linear interpolation
+    V=zeros(num_z,n_a);
+    for i=1:num_z
+        V(i,:)=interp1(a,v_guess(i,:),a_inter);
+    end
+    %After interpolation
+    cons = bsxfun(@minus, interest* a_inter', a_inter);
+    cons = bsxfun(@plus, cons, permute(z_grid, [1 3 2])*wage);
+    ret = (cons .^ (1-sigma)) ./ (1 - sigma); % current period utility
+    ret(cons<0)=-Inf;
+    value_mat=ret+beta*repmat(permute((PI*V),[3 2 1]), [n_a 1 1]);
+    [vfn, pol_indx] = max(value_mat, [], 2);
+    vfn=permute(vfn, [3 1 2]);
+    pol_indx=permute(pol_indx, [3 1 2]);
+    pol_fn = a_inter(pol_indx);
     % SET UP INITITAL DISTRIBUTION
-    MU=zeros(num_z,num_a);
-    MU(:)=1/(num_z*num_a);
+    MU=zeros(num_z,n_a);
+    MU(:)=1/(num_z*n_a);
     
     dis=1;
   while dis>0.0000001 
@@ -96,19 +112,19 @@ end
 
 %Q6 (1) policy function
 figure(1)
-plot(a,pol_fn)
+plot(a_inter,pol_fn)
 z_name=cellstr(num2str(z_grid'));
 legend(z_name,'location','southeast')
 title(['Policy Function for Productivity z'])
 
 %Q6. (2) gini coefficient and lorenz curve
-pop=reshape(MU',[num_z*num_a,1]);
-wealth=reshape(repmat(a,num_z,1)',[num_z*num_a,1]);
+pop=reshape(MU',[num_z*n_a,1]);
+wealth=reshape(repmat(a_inter,num_z,1)',[num_z*n_a,1]);
 
 %%%%%%% Distribution Plot%%%%%
 mu=sum(MU);
 figure(2)
-bar(a,mu)
+bar(a_inter,mu)
 title('Distribution of Assets')
 %%%%%%% Gini coefficient and lorenz curve%%%%
 WEALTH=sortrows([wealth,pop,pop.*wealth]);
@@ -131,11 +147,11 @@ title(['Wealth, Gini=',num2str(gini_wealth2)])
 hold off
 
 y=z_grid*wage
-Y=repmat(y',[1,num_a]);
+Y=repmat(y',[1,n_a]);
 A=repmat(a,[num_z,1])
 c=Y+interest*A-pol_fn;
 cf=c(:,pol_indx');
-cf1=reshape(cf,[num_z num_a num_z]);
+cf1=reshape(cf,[num_z n_a num_z]);
 i=1;
 while i < num_z+1
 c1(i,:)=PI(i,:)*cf1(:,:,i);

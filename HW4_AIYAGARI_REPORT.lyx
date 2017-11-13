@@ -511,6 +511,105 @@ Q7.
 \end_layout
 
 \begin_layout Subsection*
+Coarse Grid
+\end_layout
+
+\begin_layout Standard
+Using VFI results from 50 grids points of 
+\begin_inset Formula $a$
+\end_inset
+
+, the wealth distribution and lorenz curve are little bit different.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Results from Coarse Grid
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Wealth Distribution
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename GRAPHS/DISTRIBUTION_coarse.png
+	scale 15
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Lorenz Curve of Coarse Grid
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename GRAPHS/LC-coarse.png
+	scale 15
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
 Policy function iteration
 \end_layout
 
@@ -544,11 +643,7 @@ Track the time of value function iteration and policy function iteration
 \begin_inset Float figure
 wide false
 sideways false
-status open
-
-\begin_layout Plain Layout
-
-\end_layout
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Caption Standard
@@ -584,7 +679,7 @@ Value Function Iteration (with Euler Equation Error 0.0050)
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename GRAPHS/aiyagari_Grid.png
+	filename GRAPHS/aiyagari_VFI.png
 	scale 30
 
 \end_inset
@@ -624,6 +719,49 @@ Policy Function Iteration (with Euler Equation Error 0.0050)
 \align center
 \begin_inset Graphics
 	filename GRAPHS/aiyagari_PFI.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Coarse Grid
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename GRAPHS/aiyagari_coarse.png
 	scale 30
 
 \end_inset
